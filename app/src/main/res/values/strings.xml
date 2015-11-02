@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">CowsAndBools</string>
+    <string name="hint">Введите число</string>
+    <string name="ok">OK</string>
+    <string name="game_over">Игра окончена</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+</resources>
