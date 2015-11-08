@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -69,7 +68,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 }
                 while (numb == 0);
                 new_numb += numb;
-                continue;
             } else {
                 String temp;
                 do {
@@ -86,7 +84,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     public boolean checkNumber(String num) {
         boolean result = true;
 
-        if(num == "")
+        if(num.equals(""))
             result = false;
 
         if(num.length() < 4)
@@ -116,33 +114,36 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        adapter = new ArrayAdapter<String>(this, R.layout.my_item_list, listNumbers);
-        list_item.setAdapter(adapter);
-
-        shPref = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor editor = shPref.edit();
-        editor.putString(SAVE_NUMBER, etNumb.getText().toString());
-        editor.commit();
-        String playerNumber = shPref.getString(SAVE_NUMBER,"");
-        if(checkNumber(playerNumber)){
-            if(bulls == 4){
-                onCreateDialog(DIALOG_WIN);
+        try {
+            adapter = new ArrayAdapter<>(this, R.layout.my_item_list, listNumbers);
+            list_item.setAdapter(adapter);
+            shPref = getPreferences(MODE_PRIVATE);
+            SharedPreferences.Editor editor = shPref.edit();
+            editor.putString(SAVE_NUMBER, etNumb.getText().toString());
+            editor.commit();
+            String playerNumber = shPref.getString(SAVE_NUMBER, "");
+            if (checkNumber(playerNumber)) {
+                if (bulls == 4) {
+                    onCreateDialog(DIALOG_WIN);
+                } else {
+                    listNumbers.add(0, ++step + ". " + playerNumber + " " + cows + " коровы, " + bulls + " быка.");
+                    adapter.notifyDataSetChanged();
+                    etNumb.setText("");
+                    cows = 0;
+                    bulls = 0;
+                }
             } else {
-                listNumbers.add(0, ++step + ". " + playerNumber + " " + cows + " коровы, " + bulls + " быка.");
-                adapter.notifyDataSetChanged();
+
                 etNumb.setText("");
-                cows =0;
+                Toast.makeText(this, "Введите корректное число", Toast.LENGTH_LONG).show();
+                cows = 0;
                 bulls = 0;
             }
-        } else {
-
-            etNumb.setText("");
-            Toast.makeText(this, "Введите корректное число", Toast.LENGTH_LONG).show();
-            cows =0;
-            bulls = 0;
+        }catch (StringIndexOutOfBoundsException e){
+            Toast.makeText(this, "Введите число", Toast.LENGTH_LONG).show();
         }
     }
-
+        @Override
         protected Dialog onCreateDialog(int id){
         if(id == DIALOG_WIN){
             AlertDialog.Builder adb = new AlertDialog.Builder(this);
